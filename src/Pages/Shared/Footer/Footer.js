@@ -25,7 +25,7 @@ const Footer = () => {
                         <Link className="link link-hover">New York - 101010 Hudson</Link>
                     </div>
                 </footer>
-                <div className='my-6 text-center'>
+                <div className='py-6 text-center'>
                     <p>Copyright 2022 All Rights Reserved</p>
                 </div>
             </div>

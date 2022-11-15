@@ -1,8 +1,22 @@
-import React, { useState } from 'react';
-import { NavLink, NavNavLink } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { AuthContext } from '../../../contexts/AuthProvider';
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user, logout } = useContext(AuthContext)
+    const navigate = useNavigate()
+
+    const handleLogout = () => {
+        logout()
+            .then(() => {
+                toast.info('Logout Successful', { autoClose: 1000 })
+                navigate('/login')
+
+            })
+            .catch(error => console.log(error))
+    }
     return (
         <div className="px-4 py-5 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
             <div className="relative flex items-center justify-between">
@@ -35,7 +49,7 @@ const Navbar = () => {
                             to="/about"
                             aria-label="about"
                             title="About"
-                             className={({ isActive }) =>
+                            className={({ isActive }) =>
                                 isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
                             }
                         >
@@ -47,7 +61,7 @@ const Navbar = () => {
                             to="/appointment"
                             aria-label="appointment"
                             title="Appointment"
-                             className={({ isActive }) =>
+                            className={({ isActive }) =>
                                 isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
                             }
                         >
@@ -59,7 +73,7 @@ const Navbar = () => {
                             to="/reviews"
                             aria-label="reviews"
                             title="Reviews"
-                             className={({ isActive }) =>
+                            className={({ isActive }) =>
                                 isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
                             }
                         >
@@ -71,25 +85,52 @@ const Navbar = () => {
                             to="/contactUs"
                             aria-label="Contact Us"
                             title="Contact Us"
-                             className={({ isActive }) =>
+                            className={({ isActive }) =>
                                 isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
                             }
                         >
                             Contact Us
                         </NavLink>
                     </li>
-                    <li>
-                        <NavLink
-                            to="/Login"
-                            aria-label="Login"
-                            title="Contact Us"
-                             className={({ isActive }) =>
-                                isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
-                            }
-                        >
-                            Login
-                        </NavLink>
-                    </li>
+                    {user?.uid ?
+                        <>
+                            <li>
+                                <NavLink
+                                    to='/dashboard'
+                                    aria-label="Login"
+                                    title="Login"
+                                    className={({ isActive }) =>
+                                        isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                    }
+                                >
+                                    Dashboard
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink
+                                    onClick={handleLogout}
+                                    aria-label="Login"
+                                    title="Login"
+                                    className="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                >
+                                    Logout
+                                </NavLink>
+                            </li>
+                        </>
+                        :
+                        <li>
+                            <NavLink
+                                to="/login"
+                                aria-label="Login"
+                                title="Login"
+                                className={({ isActive }) =>
+                                    isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                }
+                            >
+                                Login
+                            </NavLink>
+                        </li>
+                    }
                 </ul>
                 <div className="lg:hidden">
                     <button
@@ -152,9 +193,9 @@ const Navbar = () => {
                                                 to="/"
                                                 aria-label="Home"
                                                 title="Home"
-                                                 className={({ isActive }) =>
-                                isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
-                            }
+                                                className={({ isActive }) =>
+                                                    isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                }
                                             >
                                                 Home
                                             </NavLink>
@@ -164,9 +205,9 @@ const Navbar = () => {
                                                 to="/about"
                                                 aria-label="About"
                                                 title="About"
-                                                 className={({ isActive }) =>
-                                isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
-                            }
+                                                className={({ isActive }) =>
+                                                    isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                }
                                             >
                                                 About
                                             </NavLink>
@@ -176,9 +217,9 @@ const Navbar = () => {
                                                 to="/appointment"
                                                 aria-label="Appointment"
                                                 title="Appointment"
-                                                 className={({ isActive }) =>
-                                isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
-                            }
+                                                className={({ isActive }) =>
+                                                    isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                }
                                             >
                                                 Appointment
                                             </NavLink>
@@ -188,9 +229,9 @@ const Navbar = () => {
                                                 to="/reviews"
                                                 aria-label="Reviews"
                                                 title="Reviews"
-                                                 className={({ isActive }) =>
-                                isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
-                            }
+                                                className={({ isActive }) =>
+                                                    isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                }
                                             >
                                                 Reviews
                                             </NavLink>
@@ -200,25 +241,53 @@ const Navbar = () => {
                                                 to="/contactUs"
                                                 aria-label="Contact Us"
                                                 title="Contact Us"
-                                                 className={({ isActive }) =>
-                                isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
-                            }
+                                                className={({ isActive }) =>
+                                                    isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                }
                                             >
                                                 Contact Us
                                             </NavLink>
                                         </li>
-                                        <li>
-                                            <NavLink
-                                                to="/login"
-                                                aria-label="Login"
-                                                title="Login"
-                                                 className={({ isActive }) =>
-                                isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
-                            }
-                                            >
-                                                Login
-                                            </NavLink>
-                                        </li>
+
+                                        {user?.uid ?
+                                            <>
+                                                <li>
+                                                    <NavLink
+                                                        to='/dashboard'
+                                                        aria-label="Login"
+                                                        title="Login"
+                                                        className={({ isActive }) =>
+                                                            isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                        }
+                                                    >
+                                                        Dashboard
+                                                    </NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink
+                                                        onClick={handleLogout}
+                                                        aria-label="Login"
+                                                        title="Login"
+                                                        className= "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                    >
+                                                        Logout
+                                                    </NavLink>
+                                                </li>
+                                            </>
+                                            :
+                                            <li>
+                                                <NavLink
+                                                    to="/login"
+                                                    aria-label="Login"
+                                                    title="Login"
+                                                    className={({ isActive }) =>
+                                                        isActive ? "font-medium btn text-white tracking-wide transition-colors duration-200 hover:text-deep-purple-accent-400" : "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                    }
+                                                >
+                                                    Login
+                                                </NavLink>
+                                            </li>
+                                        }
                                     </ul>
                                 </nav>
                             </div>
@@ -226,7 +295,7 @@ const Navbar = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

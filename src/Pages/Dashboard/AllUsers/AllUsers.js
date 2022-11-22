@@ -13,9 +13,9 @@ const AllUsers = () => {
     })
 
     const handleMakeAdmin = id =>{
-        fetch(`https://doctors-portal-server-rosy.vercel.app/users/admin/${id}`, {
+        fetch(`https://doctors-portal-server-rosy.vercel.app/users/admin/${id}`,{
             method: 'PUT',
-            Headers: {
+            headers: {
                 authorization: `bearer ${localStorage.getItem('accessToken')}`
             }
         })

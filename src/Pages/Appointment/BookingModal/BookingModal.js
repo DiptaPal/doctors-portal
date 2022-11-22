@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { format } from 'date-fns';
+import { AuthContext } from '../../../contexts/AuthProvider';
+import { json } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
-    const { name, slots } = treatment;
-    const date = format(selectedDate, 'PP')
+const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
+    const { name, slots, price } = treatment;
+    const date = format(selectedDate, 'PP');
+    const {user} = useContext(AuthContext)
 
     const handleBooking = event =>{
         event.preventDefault();
@@ -19,13 +23,32 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
             slot,
             email,
             phone,
+            price,
         }
 
         //TODO: send data to the server
         //and once data is saved then close the modal
         // and display success toast
-        console.log(booking);
-        setTreatment(null)
+        
+        fetch('https://doctors-portal-server-rosy.vercel.app/bookings', {
+            method: 'POST',
+            headers: {
+                'content-type' : 'application/json'
+            },
+            body: JSON.stringify(booking) 
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.acknowledged){
+                toast.success('Booking Confirmed',{autoClose: 1000})
+                setTreatment(null)
+                refetch();
+            }
+            else{
+                toast.error(data.message,{autoClose: 1000});
+                
+            }
+        })
     }
 
     return (
@@ -46,9 +69,9 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
                             }
                         </select>
 
-                        <input type="text" name='username' placeholder="Full Name" className="w-full input-ghost outline-none py-3 px-4 border rounded-md font-semibold" />
-                        <input type="text" name='phone' placeholder="Phone Number" className="w-full input-ghost outline-none py-3 px-4 border rounded-md font-semibold" />
-                        <input type="email" name='email' placeholder="Email" className="w-full input-ghost outline-none py-3 px-4 border rounded-md font-semibold" />
+                        <input type="text" name='username' defaultValue={user?.displayName} readOnly  placeholder="Full Name" className="w-full input-ghost outline-none py-3 px-4 border rounded-md font-semibold" />
+                        <input type="text" name='phone' required placeholder="Phone Number" className="w-full input-ghost outline-none py-3 px-4 border rounded-md font-semibold" />
+                        <input type="email" name='email' defaultValue={user?.email}  readOnly  placeholder="Email" className="w-full input-ghost outline-none py-3 px-4 border rounded-md font-semibold" />
                         <button type="submit" className='w-full btn text-white'>Submit</button>
                     </form>
                 </div>

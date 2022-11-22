@@ -154,6 +154,9 @@ const Navbar = () => {
                             />
                         </svg>
                     </button>
+                    <label htmlFor="dashboard-drawer" tabIndex={2} className="btn btn-ghost lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+                    </label>
                     {isMenuOpen && (
                         <div className="absolute top-0 left-0 w-full z-50">
                             <div className="p-5 bg-white border rounded shadow-sm">
@@ -268,7 +271,7 @@ const Navbar = () => {
                                                         onClick={handleLogout}
                                                         aria-label="Login"
                                                         title="Login"
-                                                        className= "font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                                                        className="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
                                                     >
                                                         Logout
                                                     </NavLink>

@@ -4,13 +4,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../contexts/AuthProvider';
 import useTitle from '../../Hooks/useTitle';
+import useToken from '../../Hooks/useToken';
 
 const Register = () => {
     useTitle('Register')
     const [error, setError] = useState('')
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const { createUser, userProfileUpdate, singInWithGoogle } = useContext(AuthContext)
+    const { createUser, userProfileUpdate, singInWithGoogle } = useContext(AuthContext);
+    const [createdUserEmail, setCreateUserEmail] = useState('')
+    const [token] = useToken(createdUserEmail);
+    
     const navigate = useNavigate();
+    if(token){
+        navigate('/')
+    }
 
     const handleRegister = data => {
         createUser(data.email, data.password)
@@ -18,13 +25,49 @@ const Register = () => {
                 const user = result.user;
                 handleUpdateProfile(data.username)
                 toast.success('User Create Successful', { autoClose: 1000 })
-                navigate('/')
+                saveUser(data.username, data.email);
             })
             .catch(error => {
                 setError(error.message)
                 toast.error(error.message, { autoClose: 1000 })
             })
     }
+
+
+    const handleGoogleSingUp = () => {
+        singInWithGoogle()
+            .then(result => {
+                const user = result.user;
+                toast.success('User Create Successful', { autoClose: 1000 })
+                saveUser(user.displayName, user.email);
+            })
+            .catch(error => {
+                setError(error.message)
+                toast.error(error.message, { autoClose: 1000 })
+            })
+    }
+
+
+    const saveUser =  (name, email) =>{
+        const user = {
+            name,
+            email
+        }
+        fetch('https://doctors-portal-server-rosy.vercel.app/users', {
+            method: 'POST',
+            headers: {
+                'content-type' : 'application/json', 
+            },
+            body: JSON.stringify(user)
+        })
+        .then(res => res.json())
+        .then(data =>{
+            setCreateUserEmail(email)
+        })
+
+    }
+
+
     const handleUpdateProfile = name => {
         userProfileUpdate({ displayName: name })
             .then(() => {
@@ -36,18 +79,6 @@ const Register = () => {
             })
     }
 
-    const handleGoogleSingUp = () => {
-        singInWithGoogle()
-            .then(result => {
-                const user = result.user;
-                toast.success('User Create Successful', { autoClose: 1000 })
-                navigate('/')
-            })
-            .catch(error => {
-                setError(error.message)
-                toast.error(error.message, { autoClose: 1000 })
-            })
-    }
 
     return (
         <div className='flex justify-center items-center mt-[200px]'>

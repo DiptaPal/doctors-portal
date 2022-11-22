@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../contexts/AuthProvider';
 import useTitle from '../../Hooks/useTitle';
+import useToken from '../../Hooks/useToken';
 
 const Login = () => {
     useTitle('Login');
@@ -12,8 +13,14 @@ const Login = () => {
     const [userEmail, setUserEmail] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
+    const [loginUserEmail, setLoginUserEmail] = useState('')
+    const [token] = useToken(loginUserEmail);
 
     const from =  location.state?.from?.pathname || "/";
+
+    if(token){
+        navigate(from, { replace: true });
+    }
 
     const { register, formState: { errors }, handleSubmit } = useForm();
     const { signIn, singInWithGoogle, passwordReset } = useContext(AuthContext);
@@ -24,7 +31,8 @@ const Login = () => {
                 setError('')
                 const user = result.user;
                 toast.success("Login Successful", { autoClose: 1000 })
-                navigate(from, { replace: true });
+                setLoginUserEmail(data.email)
+                // navigate(from, { replace: true });
             })
             .catch(error => {
                 setError(error.message)
@@ -37,12 +45,32 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 toast.success('Login Successful', { autoClose: 1000 })
-                navigate(from, { replace: true });
+                saveUser(user.displayName, user.email);
+                // navigate(from, { replace: true });
             })
             .catch(error => {
                 setError(error.message)
                 toast.error(error.message, { autoClose: 1000 })
             })
+    }
+
+    const saveUser =  (name, email) =>{
+        const user = {
+            name,
+            email
+        }
+        fetch('https://doctors-portal-server-rosy.vercel.app/users', {
+            method: 'POST',
+            headers: {
+                'content-type' : 'application/json', 
+            },
+            body: JSON.stringify(user)
+        })
+        .then(res => res.json())
+        .then(data =>{
+            setLoginUserEmail(email)
+        })
+
     }
 
     const handlePasswordError = event => {
@@ -72,7 +100,7 @@ const Login = () => {
                             {...register("email", {
                                 required: "Email Address is required"
                             })}
-                            type='text' className='text-xl w-full border px-4 py-4 rounded-md border-gray-300 bg-gray-50 text-gray-800 outline-secondary' name='email'
+                            type='email' id='email' className='text-xl w-full border px-4 py-4 rounded-md border-gray-300 bg-gray-50 text-gray-800 outline-secondary' name='email'
                             onBlur={handlePasswordError}
                             aria-invalid={errors.email ? "true" : "false"}
                         />
@@ -85,7 +113,7 @@ const Login = () => {
                                 required: "Password is required",
                                 minLength: { value: 6, message: 'Password must be 6 characters or longer' }
                             })}
-                            type='password' className='text-xl w-full border px-4 py-4 rounded-md border-gray-300 bg-gray-50 text-gray-800 outline-secondary' name='password'
+                            type='password' id='password' className='text-xl w-full border px-4 py-4 rounded-md border-gray-300 bg-gray-50 text-gray-800 outline-secondary' name='password'
                             aria-invalid={errors.password ? "true" : "false"}
                         />
 

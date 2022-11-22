@@ -14,11 +14,11 @@ const Payment = () => {
     const { treatment, price, appointmentDate, slot, patient, email } = booking
     const { register, formState: { errors }, handleSubmit } = useForm();
 
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
 
-    if(navigation.state === "loading"){
-      return  <Loading></Loading>
-    }
+    // if(navigation.state === "loading"){
+    //   return  <Loading></Loading>
+    // }
     return (
         <div className='px-10'>
             <div className='m-7'>
